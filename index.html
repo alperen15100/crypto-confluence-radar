@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Crypto Confluence Radar – Live Crypto Scanner & Trading Confluence</title>
+  <meta name="description" content="Real-time crypto confluence scanner with RSI, EMA, MACD, VWAP, FVG, support and resistance, breakout detection, volume profile and live Binance market data.">
+  <meta name="keywords" content="crypto confluence scanner, crypto scanner, crypto trading scanner, crypto breakout scanner, RSI scanner, VWAP scanner, FVG scanner, Binance crypto scanner">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#07110d">
+  <meta property="og:title" content="Crypto Confluence Radar">
+  <meta property="og:description" content="Find high-confluence crypto setups before the move.">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://alperen15100.github.io/crypto-confluence-radar/">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Crypto Confluence Radar","applicationCategory":"FinanceApplication","operatingSystem":"Web","description":"Real-time crypto market scanner with multi-indicator confluence scoring."}</script>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="logo">CR</div><div><h1>Crypto Confluence Radar</h1><p>Live crypto scanner & trading confluence</p></div></div>
+  <div class="head-actions"><span id="connection" class="status"><i></i> Connecting</span><button id="notifyBtn" class="ghost">Enable Alerts</button></div>
+</header>
+
+<main>
+<section class="hero">
+  <div><span class="eyebrow">REAL-TIME MARKET INTELLIGENCE</span><h2>Find high-confluence crypto setups <em>before the move.</em></h2><p>Binance public market data is analyzed directly in your browser. No paid market-data API and no account required.</p></div>
+  <div class="orb"><strong id="marketCount">0</strong><span>USDT markets</span><small id="scanStatus">Loading markets…</small></div>
+</section>
+
+<section class="stats">
+  <article><span>High Confluence</span><strong id="highCount">0</strong><small>score ≥ 80</small></article>
+  <article><span>Breakouts</span><strong id="breakoutCount">0</strong><small>live candidates</small></article>
+  <article><span>Oversold</span><strong id="oversoldCount">0</strong><small>RSI ≤ 30</small></article>
+  <article><span>Overbought</span><strong id="overboughtCount">0</strong><small>RSI ≥ 70</small></article>
+</section>
+
+<section class="panel toolbar">
+  <div class="tabs" id="tabs">
+    <button class="active" data-filter="all">Radar</button>
+    <button data-filter="hot">🔥 Hot Zones</button>
+    <button data-filter="breakout">⚡ Breakouts</button>
+    <button data-filter="oversold">📉 Oversold</button>
+    <button data-filter="overbought">📈 Overbought</button>
+  </div>
+  <div class="tools"><select id="timeframe"><option value="5m">5m</option><option value="15m" selected>15m</option><option value="1h">1h</option><option value="4h">4h</option></select><input id="search" placeholder="Search BTC, ETH…"><button id="refresh" class="ghost">Rescan</button></div>
+</section>
+
+<section class="panel">
+  <div class="section-head"><div><h3>Confluence Radar</h3><p id="updated">Waiting for first scan</p></div><span class="tiny">Top liquid USDT markets get deep technical analysis to stay inside public API limits.</span></div>
+  <div class="table-wrap"><table><thead><tr><th>Market</th><th>Price</th><th>24h</th><th>RSI</th><th>Score</th><th>Evidence</th><th></th></tr></thead><tbody id="radarBody"><tr><td colspan="7" class="empty">Scanning Binance markets…</td></tr></tbody></table></div>
+</section>
+
+<section id="detail" class="detail hidden">
+  <article class="panel chart-panel">
+    <div class="section-head"><div><h3 id="detailSymbol">BTCUSDT</h3><p id="detailMeta">Live chart</p></div><div id="detailScore" class="score">--</div></div>
+    <div id="chart"></div><div id="legend" class="legend"></div>
+  </article>
+  <aside class="stack">
+    <article class="panel"><h3>Confluence Breakdown</h3><div id="breakdown" class="signal-list"></div></article>
+    <article class="panel"><h3>Key Levels</h3><div id="levels" class="level-list"></div></article>
+    <article class="panel"><h3>Order Book</h3><div class="book"><div><b>Bids</b><div id="bids"></div></div><div><b>Asks</b><div id="asks"></div></div></div></article>
+    <article class="panel"><h3>Large Trades</h3><div id="trades" class="trades"><span class="muted">Waiting for trades…</span></div></article>
+  </aside>
+</section>
+
+<section class="panel explainer"><h3>Multi-indicator confluence</h3><p>The score combines independent technical evidence: trend, momentum, volume, market structure and important price levels. It is a scanner, not financial advice.</p><div class="chips"><span>RSI</span><span>EMA 9/21</span><span>MACD</span><span>VWAP</span><span>FVG</span><span>Support/Resistance</span><span>Volume Profile</span><span>Breakout</span><span>Previous Day/Week</span></div></section>
+</main>
+<footer><span>Crypto Confluence Radar</span><span>Binance public market data</span><span>Built by <strong>Ecrin Labs</strong></span></footer>
+<script src="https://unpkg.com/lightweight-charts@4.2.3/dist/lightweight-charts.standalone.production.js"></script>
+<script src="app.js"></script>
+</body></html>
