@@ -112,19 +112,51 @@ async function fetchDaily(symbol){
   }));
 }
 
+
+function structureConfirmation(candles){
+  if(!candles || candles.length < 35) return {
+    horizontal:false, weeklyBody:false, marketDirection:false,
+    resistance:null, weeklyBodyLevel:null, confirmations:0
+  };
+
+  const last = candles.at(-1);
+  const prev = candles.at(-2);
+
+  // Horizontal structure: highest HIGH of the prior 30 completed daily candles.
+  // The live daily candle must trade/close above it.
+  const prior30 = candles.slice(-31,-1);
+  const resistance = Math.max(...prior30.map(c=>c.high));
+  const horizontal = last.close > resistance;
+
+  // Higher-timeframe body proxy from daily data:
+  // compare current price with the highest candle BODY top in the prior 7 completed daily candles.
+  const prior7 = candles.slice(-8,-1);
+  const weeklyBodyLevel = Math.max(...prior7.map(c=>Math.max(c.open,c.close)));
+  const weeklyBody = last.close > weeklyBodyLevel;
+
+  // Simple daily bullish structure confirmation.
+  const marketDirection = last.close > prev.close;
+
+  const confirmations = [horizontal,weeklyBody,marketDirection].filter(Boolean).length;
+  return {horizontal,weeklyBody,marketDirection,resistance,weeklyBodyLevel,confirmations};
+}
+
 async function analyze(ticker){
   try{
     const candles = await fetchDaily(ticker.symbol);
     const hit = testFresh(candles.map(c => c.close));
     if(!hit) return null;
 
+    const structure = structureConfirmation(candles);
     return {
       symbol: ticker.symbol,
       rsi: hit.rsi,
       price: hit.lastPrice,
       change: +ticker.priceChangePercent,
       count: updateHistory(ticker.symbol),
-      candles
+      candles,
+      structure,
+      status: structure.confirmations === 3 ? "CONFIRMED" : "FRESH"
     };
   }catch(e){
     return null;
@@ -153,12 +185,14 @@ function render(){
       <td>
         <strong>${x.symbol.replace("USDT","")}</strong>
         <span class="pair">/USDT.P</span>
-        <span class="fresh">FRESH</span>
+        <span class="${x.status==="CONFIRMED"?"confirmed":"fresh"}">${x.status}</span>
       </td>
       <td>${fmt(x.price)}</td>
-      <td class="${x.change >= 0 ? "up" : "down"}">${x.change >= 0 ? "+" : ""}${x.change.toFixed(2)}%</td>
       <td><strong>${x.rsi.toFixed(2)}</strong></td>
-      <td>${x.count}</td>
+      <td>${x.structure.horizontal ? "✓" : "—"}</td>
+      <td>${x.structure.weeklyBody ? "✓" : "—"}</td>
+      <td>${x.structure.marketDirection ? "✓" : "—"}</td>
+      <td><strong>${x.structure.confirmations}/3</strong></td>
     </tr>
   `).join("");
 
@@ -197,6 +231,26 @@ async function openDailyChart(symbol){
   candleSeries.setData(candles.map(c => ({
     time:c.time, open:c.open, high:c.high, low:c.low, close:c.close
   })));
+
+  const structure = structureConfirmation(candles);
+  if(Number.isFinite(structure.resistance)){
+    candleSeries.createPriceLine({
+      price:structure.resistance,
+      title:"30D Horizontal",
+      lineWidth:2,
+      lineStyle:2,
+      axisLabelVisible:true
+    });
+  }
+  if(Number.isFinite(structure.weeklyBodyLevel)){
+    candleSeries.createPriceLine({
+      price:structure.weeklyBodyLevel,
+      title:"7D Body",
+      lineWidth:1,
+      lineStyle:3,
+      axisLabelVisible:true
+    });
+  }
   chart.timeScale().fitContent();
 
   new ResizeObserver(() => {
@@ -221,7 +275,7 @@ async function scan(){
       await sleep(100);
     }
 
-    signals = found.sort((a,b) => b.rsi - a.rsi);
+    signals = found.sort((a,b) => b.structure.confirmations-a.structure.confirmations || b.rsi-a.rsi);
     render();
 
     // Açık grafikteki coin hâlâ fresh ise grafiği yenile.

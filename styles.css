@@ -41,3 +41,6 @@ footer{max-width:1200px;margin:auto;padding:20px 18px 35px;color:var(--muted);fo
   .panel{padding:14px}
   header{padding-top:16px}
 }
+
+.confirmed{display:inline-block;margin-left:7px;padding:3px 6px;border-radius:6px;background:#15351f;color:#b7ff9e;font-size:9px;font-weight:900;letter-spacing:.06em}
+td:nth-child(n+4){text-align:center}
