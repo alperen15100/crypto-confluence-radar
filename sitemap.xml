@@ -1,19 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<url><loc>https://alperen15100.github.io/crypto-confluence-radar/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
-<url><loc>https://alperen15100.github.io/crypto-confluence-radar/guides/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://alperen15100.github.io/crypto-confluence-radar/coins/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://alperen15100.github.io/crypto-confluence-radar/methodology.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://alperen15100.github.io/crypto-confluence-radar/guides/crypto-rsi-scanner.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://alperen15100.github.io/crypto-confluence-radar/guides/crypto-fvg-scanner.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://alperen15100.github.io/crypto-confluence-radar/guides/crypto-breakout-scanner.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://alperen15100.github.io/crypto-confluence-radar/guides/crypto-vwap-scanner.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://alperen15100.github.io/crypto-confluence-radar/coins/bitcoin.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://alperen15100.github.io/crypto-confluence-radar/coins/ethereum.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://alperen15100.github.io/crypto-confluence-radar/coins/solana.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://alperen15100.github.io/crypto-confluence-radar/coins/bnb.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://alperen15100.github.io/crypto-confluence-radar/coins/xrp.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://alperen15100.github.io/crypto-confluence-radar/coins/dogecoin.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://alperen15100.github.io/crypto-confluence-radar/coins/cardano.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-<url><loc>https://alperen15100.github.io/crypto-confluence-radar/coins/chainlink.html</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+<url><loc>https://alperen15100.github.io/crypto-confluence-radar/</loc></url>
+<url><loc>https://alperen15100.github.io/crypto-confluence-radar/methodology.html</loc></url>
+<url><loc>https://alperen15100.github.io/crypto-confluence-radar/guides/</loc></url>
+<url><loc>https://alperen15100.github.io/crypto-confluence-radar/guides/crypto-rsi-overbought-scanner.html</loc></url>
+<url><loc>https://alperen15100.github.io/crypto-confluence-radar/guides/perpetual-futures-scanner.html</loc></url>
+<url><loc>https://alperen15100.github.io/crypto-confluence-radar/guides/crypto-breakout-levels.html</loc></url>
 </urlset>

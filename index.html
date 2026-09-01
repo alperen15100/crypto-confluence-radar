@@ -1,29 +1,17 @@
-<!doctype html><html lang="tr"><head>
+<!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
-<title>Crypto Overbought Radar – Live RSI 70 Futures Scanner</title>
-<meta name="description" content="Scan Binance USDT perpetual futures for RSI 70 overbought conditions, rank the most frequent overbought markets, and inspect them on a live daily chart.">
-<link rel="stylesheet" href="styles.css?v=15"></head><body>
+<title>PerpMomentum – Crypto RSI Overbought Scanner & Futures Breakout Radar</title>
+<meta name="description" content="Scan Binance USDT perpetual futures for daily RSI overbought conditions, rank recurring momentum markets and inspect breakout levels on live 1D charts.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<link rel="canonical" href="https://alperen15100.github.io/crypto-confluence-radar/">
+<meta name="theme-color" content="#07100d">
+<meta property="og:type" content="website"><meta property="og:site_name" content="PerpMomentum"><meta property="og:title" content="PerpMomentum – Crypto RSI Overbought Scanner"><meta property="og:description" content="Live daily RSI overbought ranking and breakout-level charts for Binance USDT perpetual futures."><meta property="og:url" content="https://alperen15100.github.io/crypto-confluence-radar/">
+<meta name="twitter:card" content="summary"><meta name="twitter:title" content="PerpMomentum – Crypto RSI Overbought Scanner"><meta name="twitter:description" content="Daily RSI overbought ranking and breakout-level charts for USDT perpetual futures.">
+<link rel="manifest" href="manifest.webmanifest"><link rel="stylesheet" href="styles.css?v=15">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://alperen15100.github.io/crypto-confluence-radar/#website","url":"https://alperen15100.github.io/crypto-confluence-radar/","name":"PerpMomentum","description":"Crypto RSI overbought scanner and perpetual futures breakout radar.","publisher":{"@id":"https://alperen15100.github.io/crypto-confluence-radar/#org"}},{"@type":"Organization","@id":"https://alperen15100.github.io/crypto-confluence-radar/#org","name":"Ecrin Labs"},{"@type":"WebApplication","name":"PerpMomentum","url":"https://alperen15100.github.io/crypto-confluence-radar/","applicationCategory":"FinanceApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","description":"Browser-based crypto market scanner for daily RSI overbought conditions and perpetual futures breakout levels.","creator":{"@id":"https://alperen15100.github.io/crypto-confluence-radar/#org"}}]}</script>
+</head><body>
 <div class="terminal">
-<header><div class="brand"><b>CRYPTO</b><span>OVERBOUGHT RADAR</span><small>Ecrin Labs</small></div>
-<div class="status"><i></i><span id="scanState">SCANNING</span><button id="rescanBtn">RESCAN</button></div></header>
-
-<div class="workspace">
-<aside class="feed">
-<div class="feed-head"><div><small>TECHNICAL FLOW</small><b>Overbought Ranking</b></div><strong id="signalCount">0</strong></div>
-<div class="search"><input id="search" placeholder="Search BTC, UAI…"></div>
-<div id="feedRows" class="feed-rows"><div class="empty">Scanning USDT.P…</div></div>
-<div class="feed-foot"><span><b id="marketCount">0</b> markets</span><span id="updated">--</span></div>
-</aside>
-
-<main class="chart-area">
-<div class="chart-top">
-<div><small>BINANCE · USDT PERPETUAL · 1D</small><h1 id="chartSymbol">Select a market</h1></div>
-<div class="metrics"><span>RSI <b id="metricRsi">--</b></span><span>24H COUNT <b id="metricCount">--</b></span><a id="tvLink" target="_blank">TRADINGVIEW ↗</a></div>
-</div>
-<div class="rulebar"><span>BREAKOUT LEVEL</span></div>
-<div id="chart"><div class="chart-placeholder"><b>OVERBOUGHT → CHART</b><span>Select a ranked market from the technical flow.</span></div></div>
-<div class="zone-legend"><span><i class="price-dot"></i> Current price</span><span><i class="zone-dot"></i> Breakout level</span></div>
-</main>
-</div></div>
-<script src="https://unpkg.com/lightweight-charts@4.2.3/dist/lightweight-charts.standalone.production.js"></script>
-<script src="app.js?v=15"></script></body></html>
+<header><div class="brand"><b>PERP</b><span>MOMENTUM</span><small>Ecrin Labs</small></div><div class="status"><i></i><span id="scanState">SCANNING</span><button id="rescanBtn">RESCAN</button></div></header>
+<div class="workspace"><aside class="feed"><div class="feed-head"><div><small>TECHNICAL FLOW</small><b>Overbought Ranking</b></div><strong id="signalCount">0</strong></div><div class="search"><input id="search" aria-label="Search perpetual futures market" placeholder="Search BTC, UAI…"></div><div id="feedRows" class="feed-rows"><div class="empty">Scanning USDT.P…</div></div><div class="feed-foot"><span><b id="marketCount">0</b> markets</span><span id="updated">--</span></div></aside>
+<main class="chart-area"><div class="chart-top"><div><small>BINANCE · USDT PERPETUAL · 1D</small><h1 id="chartSymbol">Select a market</h1></div><div class="metrics"><span>RSI <b id="metricRsi">--</b></span><span>24H COUNT <b id="metricCount">--</b></span><a id="tvLink" target="_blank" rel="noopener noreferrer">TRADINGVIEW ↗</a></div></div><div class="rulebar"><span>BREAKOUT LEVEL</span></div><div id="chart"><div class="chart-placeholder"><b>OVERBOUGHT → CHART</b><span>Select a ranked market from the technical flow.</span></div></div><div class="zone-legend"><span><i class="price-dot"></i> Current price</span><span><i class="zone-dot"></i> Breakout level</span></div></main></div></div>
+<script src="https://unpkg.com/lightweight-charts@4.2.3/dist/lightweight-charts.standalone.production.js"></script><script src="app.js?v=15"></script></body></html>

@@ -1,9 +1,1 @@
-{
-  "name": "Crypto Confluence Radar",
-  "short_name": "Confluence Radar",
-  "start_url": "./",
-  "display": "standalone",
-  "background_color": "#07100d",
-  "theme_color": "#07100d",
-  "description": "Real-time crypto confluence scanner."
-}
+{"name":"PerpMomentum","short_name":"PerpMomentum","start_url":"./","display":"standalone","background_color":"#07100d","theme_color":"#07100d","description":"Crypto RSI overbought scanner and perpetual futures breakout radar."}
