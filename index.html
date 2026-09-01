@@ -1,79 +1,29 @@
-<!doctype html>
-<html lang="tr">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Crypto Daily Fresh Radar – 1D RSI 70 Horizontal Breakout Scanner</title>
-  <meta name="description" content="USDT perpetual futures için günlük RSI 70 ve fresh yatay kırılım tarayıcısı. 200 günlük kapanışta ±0.5% geçmiş fiyat yakınlığı olmayan pariteleri bulur.">
-  <meta name="robots" content="index,follow">
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-<header>
-  <div>
-    <span class="brand">Crypto Daily Fresh Radar</span>
-    <small>Built by Ecrin Labs</small>
-  </div>
-  <button id="refreshBtn">Yeniden Tara</button>
-</header>
+<!doctype html><html lang="tr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crypto Daily Fresh Terminal | 1D RSI 70 Breakout Radar</title>
+<meta name="description" content="USDT perpetual futures için 1D RSI 70 fresh yatay kırılım terminali.">
+<link rel="stylesheet" href="styles.css"></head><body>
+<div class="terminal">
+<header><div class="brand"><b>FRESH</b><span>TERMINAL</span><small>Ecrin Labs</small></div>
+<div class="status"><i></i><span id="scanState">SCANNING</span><button id="refreshBtn">RESCAN</button></div></header>
 
-<main>
-  <section class="hero">
-    <span class="eyebrow">USDT PERPETUAL · 1D</span>
-    <h1>Fresh → Structure → Confirmed</h1>
-    <p>Önce FRESH bulunur. Sonra 1D yatay kırılım, 7 günlük body seviyesi ve günlük yön ile doğrulanır.</p>
+<div class="workspace">
+<aside class="feed">
+<div class="feed-head"><div><small>TECHNICAL FLOW</small><b>1D Fresh Radar</b></div><strong id="signalCount">0</strong></div>
+<div class="search"><input id="search" placeholder="Search BTC, UAI…"></div>
+<div id="feedRows" class="feed-rows"><div class="empty">Scanning USDT.P…</div></div>
+<div class="feed-foot"><span><b id="marketCount">0</b> markets</span><span id="updated">--</span></div>
+</aside>
 
-    <div class="stats">
-      <div><strong id="signalCount">0</strong><span>FRESH</span></div>
-      <div><strong id="marketCount">0</strong><span>PARİTE</span></div>
-      <div><strong id="scanState">Başlıyor</strong><span>DURUM</span></div>
-      <div><strong id="updated">--</strong><span>SON TARAMA</span></div>
-    </div>
-  </section>
-
-  <section class="panel">
-    <div class="head">
-      <div>
-        <h2>Fresh Sinyaller</h2>
-        <p>Sadece FRESH kriterini geçen coinler gösterilir; yapı onayları ayrıca işaretlenir.</p>
-      </div>
-    </div>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Parite</th>
-            <th>Fiyat</th>
-            <th>1D RSI</th>
-            <th>Yatay</th>
-            <th>Body</th>
-            <th>Yön</th>
-            <th>Onay</th>
-          </tr>
-        </thead>
-        <tbody id="signalRows">
-          <tr><td colspan="7" class="empty">Taranıyor…</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section id="chartPanel" class="panel hidden">
-    <div class="head">
-      <div>
-        <h2 id="chartSymbol">BTC/USDT.P</h2>
-        <p id="chartMeta">1D · 200 candles</p>
-      </div>
-      <a id="tvLink" target="_blank" rel="noopener">TradingView</a>
-    </div>
-    <div id="chart"></div>
-  </section>
+<main class="chart-area">
+<div class="chart-top">
+<div><small>BINANCE · USDT PERPETUAL · 1D</small><h1 id="chartSymbol">Select a FRESH market</h1></div>
+<div class="metrics"><span>RSI <b id="metricRsi">--</b></span><span>24H COUNT <b id="metricCount">--</b></span><a id="tvLink" target="_blank">TRADINGVIEW ↗</a></div>
+</div>
+<div class="rulebar"><span>RSI ≥ 70</span><i>+</i><span>200 DAILY CANDLES</span><i>+</i><span>NO PRIOR CLOSE ±0.5%</span><button id="zonesBtn">AUTO CONFLUENCE</button></div>
+<div id="chart"><div class="chart-placeholder"><b>FRESH → CHART</b><span>Only signals matching your original system appear in the flow.</span></div></div>
+<div class="zone-legend"><span><i class="fresh-dot"></i> Current fresh price</span><span><i class="zone-dot"></i> Auto horizontal zone</span></div>
 </main>
-
-<footer>Crypto Daily Fresh Radar · Ecrin Labs</footer>
-
+</div></div>
 <script src="https://unpkg.com/lightweight-charts@4.2.3/dist/lightweight-charts.standalone.production.js"></script>
-<script src="app.js"></script>
-</body>
-</html>
+<script src="app.js"></script></body></html>
