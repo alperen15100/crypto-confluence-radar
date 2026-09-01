@@ -24,3 +24,7 @@ A zero-server, browser-based real-time crypto confluence scanner built with Bina
 Built by **Ecrin Labs**.
 
 > Educational market scanner only. Not financial advice.
+
+
+## V3 Connection Resilience
+REST endpoint failover, WebSocket automatic reconnect with exponential backoff, cached market-list fallback, and Live/Reconnecting/Backup/Offline states. The previous successful scan stays on screen when a refresh fails.

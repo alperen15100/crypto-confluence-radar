@@ -1,4 +1,59 @@
-const API='https://api.binance.com'; const WS='wss://stream.binance.com:9443/ws';
+const API_ENDPOINTS=[
+'https://data-api.binance.vision',
+'https://api1.binance.com',
+'https://api2.binance.com',
+'https://api3.binance.com',
+'https://api4.binance.com',
+'https://api.binance.com'
+];
+const WS_ENDPOINTS=['wss://data-stream.binance.vision/ws','wss://stream.binance.com:9443/ws'];
+let apiIndex=0,wsIndex=0;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function setConn(state,text=''){
+ const el=document.getElementById('connection'); if(!el)return;
+ el.classList.toggle('live',state==='live');
+ el.dataset.state=state;
+ el.innerHTML=`<i></i> ${text||({live:'Live',retry:'Reconnecting',degraded:'Backup connection',offline:'Offline · cached data'}[state]||state)}`;
+}
+async function resilientJSON(path){
+ let last;
+ for(let i=0;i<API_ENDPOINTS.length;i++){
+  const base=API_ENDPOINTS[apiIndex%API_ENDPOINTS.length];
+  try{
+   const c=new AbortController(),timer=setTimeout(()=>c.abort(),9000);
+   const r=await fetch(base+path,{signal:c.signal,cache:'no-store'});clearTimeout(timer);
+   if(!r.ok)throw new Error('HTTP '+r.status);
+   const data=await r.json(); setConn('live'); return data;
+  }catch(e){
+   last=e; apiIndex=(apiIndex+1)%API_ENDPOINTS.length;
+   setConn('degraded','Switching endpoint…'); await sleep(Math.min(250*(i+1),1000));
+  }
+ }
+ setConn('offline'); throw last||new Error('All market endpoints failed');
+}
+function cacheSet(k,v){try{localStorage.setItem('ccr:'+k,JSON.stringify({t:Date.now(),v}))}catch(e){}}
+function cacheGet(k,maxAge=30*60*1000){try{let x=JSON.parse(localStorage.getItem('ccr:'+k));return x&&Date.now()-x.t<maxAge?x.v:null}catch(e){return null}}
+function resilientSocket(stream,onmessage){
+ let socket=null,stopped=false,attempt=0,timer=null;
+ const connect=()=>{
+  if(stopped)return;
+  try{
+   socket=new WebSocket(`${WS_ENDPOINTS[wsIndex%WS_ENDPOINTS.length]}/${stream}`);
+   socket.onopen=()=>{attempt=0;setConn('live')};
+   socket.onmessage=onmessage;
+   socket.onerror=()=>{try{socket.close()}catch(e){}};
+   socket.onclose=()=>{
+    if(stopped)return;
+    wsIndex=(wsIndex+1)%WS_ENDPOINTS.length;attempt++;
+    const delay=Math.min(1000*Math.pow(2,Math.min(attempt-1,4)),15000);
+    setConn('retry',`Reconnecting · ${Math.round(delay/1000)}s`);
+    clearTimeout(timer);timer=setTimeout(connect,delay);
+   };
+  }catch(e){timer=setTimeout(connect,2000)}
+ };
+ connect();
+ return{close(){stopped=true;clearTimeout(timer);try{socket&&socket.close()}catch(e){}}};
+}
 const $=id=>document.getElementById(id);
 let universe=[],results=[],filter='all',selected=null,chart=null,candleSeries=null,ema9Series=null,ema21Series=null,detailSockets=[];
 
@@ -15,8 +70,8 @@ function fvg(c){let bull=null,bear=null;for(let i=Math.max(2,c.length-35);i<c.le
 function supportResistance(c){let recent=c.slice(-50), lows=recent.map(x=>x.low), highs=recent.map(x=>x.high);return{support:Math.min(...lows),resistance:Math.max(...highs)}}
 function volumeProfile(c,bins=24){let low=Math.min(...c.map(x=>x.low)),high=Math.max(...c.map(x=>x.high)),step=(high-low)/bins||1,arr=Array(bins).fill(0); for(const x of c){let p=(x.high+x.low+x.close)/3,i=Math.min(bins-1,Math.max(0,Math.floor((p-low)/step)));arr[i]+=x.volume} let im=arr.indexOf(Math.max(...arr));return{poc:low+(im+.5)*step}}
 function parseKlines(d){return d.map(x=>({time:x[0]/1000,open:+x[1],high:+x[2],low:+x[3],close:+x[4],volume:+x[5]}))}
-async function getJSON(url){let r=await fetch(url);if(!r.ok)throw new Error(r.status);return r.json()}
-async function klines(symbol,interval='15m',limit=180){return parseKlines(await getJSON(`${API}/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`))}
+async function getJSON(path){return resilientJSON(path)}
+async function klines(symbol,interval='15m',limit=180){return parseKlines(await getJSON(`/api/v3/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`))}
 async function dailyLevels(symbol){let d=await klines(symbol,'1d',9);let prev=d.at(-2)||d.at(-1),week=d.slice(-8,-1);return{pdh:prev.high,pdl:prev.low,pwh:Math.max(...week.map(x=>x.high)),pwl:Math.min(...week.map(x=>x.low))}}
 
 function analyze(symbol,c,ticker,levels=null){
@@ -37,10 +92,10 @@ function analyze(symbol,c,ticker,levels=null){
 
 async function loadUniverse(){
  $('scanStatus').textContent='Loading Binance…';
- let t=await getJSON(`${API}/api/v3/ticker/24hr`);
+ let t;try{t=await getJSON('/api/v3/ticker/24hr');cacheSet('tickers',t)}catch(e){t=cacheGet('tickers');if(!t)throw e;setConn('offline')}
  universe=t.filter(x=>x.symbol.endsWith('USDT')&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(x.symbol)&&+x.quoteVolume>500000).sort((a,b)=>+b.quoteVolume-+a.quoteVolume);
  $('marketCount').textContent=universe.length;
- $('connection').classList.add('live'); $('connection').innerHTML='<i></i> Live';
+ setConn('live');
 }
 
 async function scan(){
@@ -57,7 +112,7 @@ async function scan(){
    results=out.sort((a,b)=>b.score-a.score); render(results); updateStats();
    $('updated').textContent=`Last scan ${new Date().toLocaleTimeString()} · ${results.length} liquid markets deeply analyzed`;
    $('scanStatus').textContent='Live radar ready'; notifyHigh();
- }catch(e){console.error(e);$('scanStatus').textContent='Connection error';$('connection').classList.remove('live')}
+ }catch(e){console.error(e);$('scanStatus').textContent=results.length?'Connection interrupted · showing last scan':'Connection error';setConn(results.length?'offline':'retry')}
  finally{$('refresh').disabled=false}
 }
 
@@ -132,12 +187,10 @@ function drawChart(x){
 }
 
 function openOrderBook(symbol){
- let s=new WebSocket(`${WS}/${symbol.toLowerCase()}@depth10@1000ms`); detailSockets.push(s);
- s.onmessage=e=>{let d=JSON.parse(e.data);$('bids').innerHTML=d.bids.slice(0,7).map(x=>`<div class="book-row up"><span>${fmt(x[0])}</span><span>${fmt(x[1])}</span></div>`).join('');$('asks').innerHTML=d.asks.slice(0,7).map(x=>`<div class="book-row down"><span>${fmt(x[0])}</span><span>${fmt(x[1])}</span></div>`).join('')};
+ let s=resilientSocket(`${symbol.toLowerCase()}@depth10@1000ms`,e=>{let d=JSON.parse(e.data);$('bids').innerHTML=d.bids.slice(0,7).map(x=>`<div class="book-row up"><span>${fmt(x[0])}</span><span>${fmt(x[1])}</span></div>`).join('');$('asks').innerHTML=d.asks.slice(0,7).map(x=>`<div class="book-row down"><span>${fmt(x[0])}</span><span>${fmt(x[1])}</span></div>`).join('')}); detailSockets.push(s);
 }
 function openTrades(symbol){
- let s=new WebSocket(`${WS}/${symbol.toLowerCase()}@aggTrade`);detailSockets.push(s);let arr=[];
- s.onmessage=e=>{let d=JSON.parse(e.data),usd=+d.p*+d.q;if(usd<10000)return;arr.unshift({p:+d.p,q:+d.q,usd,buy:!d.m});arr=arr.slice(0,30);$('trades').innerHTML=arr.map(t=>`<div class="trade ${t.buy?'up':'down'}"><span>${t.buy?'BUY':'SELL'} ${fmt(t.p)}</span><strong>$${Math.round(t.usd).toLocaleString()}</strong></div>`).join('')};
+ let arr=[];let s=resilientSocket(`${symbol.toLowerCase()}@aggTrade`,e=>{let d=JSON.parse(e.data),usd=+d.p*+d.q;if(usd<10000)return;arr.unshift({p:+d.p,q:+d.q,usd,buy:!d.m});arr=arr.slice(0,30);$('trades').innerHTML=arr.map(t=>`<div class="trade ${t.buy?'up':'down'}"><span>${t.buy?'BUY':'SELL'} ${fmt(t.p)}</span><strong>$${Math.round(t.usd).toLocaleString()}</strong></div>`).join('')});detailSockets.push(s);
 }
 
 function notifyHigh(){if(Notification.permission!=='granted')return; let x=results[0]; if(x&&x.score>=88){let key=`last-${x.symbol}-${Math.floor(Date.now()/1800000)}`;if(!sessionStorage[key]){new Notification(`High Confluence: ${x.symbol}`,{body:`Score ${x.score}/100 · ${x.evidence.slice(0,3).join(' + ')}`});sessionStorage[key]='1'}}}
@@ -146,4 +199,4 @@ $('refresh').onclick=scan;$('timeframe').onchange=scan;$('search').oninput=()=>r
 $('tabs').onclick=e=>{let b=e.target.closest('button');if(!b)return;document.querySelectorAll('#tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');filter=b.dataset.filter;render()};
 window.openMarket=openMarket;
 
-(async()=>{await scan();setInterval(async()=>{try{let t=await getJSON(`${API}/api/v3/ticker/24hr`);let map=Object.fromEntries(t.map(x=>[x.symbol,x]));results.forEach(x=>{let q=map[x.symbol];if(q){x.price=+q.lastPrice;x.change=+q.priceChangePercent}});render();}catch(e){}},15000);setInterval(scan,180000)})();
+(async()=>{await scan();setInterval(async()=>{try{let t=await getJSON('/api/v3/ticker/24hr');cacheSet('tickers',t);let map=Object.fromEntries(t.map(x=>[x.symbol,x]));results.forEach(x=>{let q=map[x.symbol];if(q){x.price=+q.lastPrice;x.change=+q.priceChangePercent}});render();}catch(e){}},15000);setInterval(scan,180000)})();
