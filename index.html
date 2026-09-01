@@ -1,15 +1,15 @@
 <!doctype html><html lang="tr"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Crypto Daily Fresh Terminal | 1D RSI 70 Breakout Radar</title>
-<meta name="description" content="USDT perpetual futures için 1D RSI 70 fresh yatay kırılım terminali.">
+<title>Crypto Overbought Radar – Live RSI 70 Futures Scanner</title>
+<meta name="description" content="Scan Binance USDT perpetual futures for RSI 70 overbought conditions, rank the most frequent overbought markets, and inspect them on a live daily chart.">
 <link rel="stylesheet" href="styles.css"></head><body>
 <div class="terminal">
-<header><div class="brand"><b>FRESH</b><span>TERMINAL</span><small>Ecrin Labs</small></div>
+<header><div class="brand"><b>CRYPTO</b><span>OVERBOUGHT RADAR</span><small>Ecrin Labs</small></div>
 <div class="status"><i></i><span id="scanState">SCANNING</span><button id="refreshBtn">RESCAN</button></div></header>
 
 <div class="workspace">
 <aside class="feed">
-<div class="feed-head"><div><small>TECHNICAL FLOW</small><b>1D Fresh Radar</b></div><strong id="signalCount">0</strong></div>
+<div class="feed-head"><div><small>TECHNICAL FLOW</small><b>Overbought Ranking</b></div><strong id="signalCount">0</strong></div>
 <div class="search"><input id="search" placeholder="Search BTC, UAI…"></div>
 <div id="feedRows" class="feed-rows"><div class="empty">Scanning USDT.P…</div></div>
 <div class="feed-foot"><span><b id="marketCount">0</b> markets</span><span id="updated">--</span></div>
@@ -17,12 +17,12 @@
 
 <main class="chart-area">
 <div class="chart-top">
-<div><small>BINANCE · USDT PERPETUAL · 1D</small><h1 id="chartSymbol">Select a FRESH market</h1></div>
+<div><small>BINANCE · USDT PERPETUAL · 1D</small><h1 id="chartSymbol">Select a market</h1></div>
 <div class="metrics"><span>RSI <b id="metricRsi">--</b></span><span>24H COUNT <b id="metricCount">--</b></span><a id="tvLink" target="_blank">TRADINGVIEW ↗</a></div>
 </div>
-<div class="rulebar"><span>RSI ≥ 70</span><i>+</i><span>200 DAILY CANDLES</span><i>+</i><span>NO PRIOR CLOSE ±0.5%</span><button id="zonesBtn">AUTO CONFLUENCE</button></div>
-<div id="chart"><div class="chart-placeholder"><b>FRESH → CHART</b><span>Only signals matching your original system appear in the flow.</span></div></div>
-<div class="zone-legend"><span><i class="fresh-dot"></i> Current fresh price</span><span><i class="zone-dot"></i> Auto horizontal zone</span></div>
+<div class="rulebar"><button id="zonesBtn">AUTO CONFLUENCE</button></div>
+<div id="chart"><div class="chart-placeholder"><b>OVERBOUGHT → CHART</b><span>Select a ranked market from the technical flow.</span></div></div>
+<div class="zone-legend"><span><i class="fresh-dot"></i> Current price</span><span><i class="zone-dot"></i> Auto horizontal zone</span></div>
 </main>
 </div></div>
 <script src="https://unpkg.com/lightweight-charts@4.2.3/dist/lightweight-charts.standalone.production.js"></script>

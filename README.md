@@ -1,10 +1,14 @@
-# Fresh Terminal
-Terminal-style UI built around the original 1D FRESH engine only.
-- Technical Flow sidebar
-- Full-size 1D chart
+# Crypto Overbought Radar
+Built by Ecrin Labs.
+
+Core behavior:
+- Binance USDT perpetual futures
+- 1D chart
 - RSI >= 70
 - 200 daily candles
 - no prior close within +/-0.5%
-- Auto Confluence draws nearby horizontal swing-high zones
-- USDT perpetual futures only
-- Ecrin Labs
+- every successful scan increments the 24h overbought count
+- technical flow ranks markets by highest 24h overbought count
+- no FRESH wording in the UI
+- improved formatting for very small prices
+- optional Auto Confluence horizontal zones
