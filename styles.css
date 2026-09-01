@@ -5,3 +5,5 @@ header{height:58px;border-bottom:1px solid var(--line);display:flex;align-items:
 @media(max-width:760px){body{overflow:auto}.terminal{height:auto;min-height:100vh}.workspace{display:block}.feed{height:310px;border-right:0;border-bottom:1px solid var(--line)}.chart-area{height:620px}.chart-top{height:auto;align-items:flex-start;gap:10px}.metrics{flex-wrap:wrap;justify-content:flex-end}.rulebar{overflow:auto;white-space:nowrap}.brand small{display:none}}
 .rulebar{justify-content:flex-end}
 .rulebar button{margin-left:0}
+
+.rulebar span{color:var(--green);font-weight:800;letter-spacing:.08em}

@@ -1,5 +1,5 @@
 const $=id=>document.getElementById(id),API="https://fapi.binance.com",LIMIT=200,TOL=.005,RSI_LIMIT=70;
-let markets=[],signals=[],chart=null,candleSeries=null,selected=null,zonesOn=false,scanning=false;
+let markets=[],signals=[],chart=null,candleSeries=null,selected=null,scanning=false;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function json(p){let r=await fetch(API+p,{cache:"no-store"});if(!r.ok)throw Error(r.status);return r.json()}
 function rsi(c,p=14){if(c.length<p+1)return null;let x=c.slice(-(p+1)),g=0,l=0;for(let i=1;i<=p;i++){let d=x[i]-x[i-1];d>=0?g+=d:l-=d}if(l===0)return 100;let rs=(g/p)/(l/p);return 100-100/(1+rs)}
@@ -32,7 +32,6 @@ function openChart(s){selected=s;let x=signals.find(v=>v.symbol===s);if(!x)retur
 });
 const minMove = x.price >= 1 ? 0.01 : x.price >= 0.01 ? 0.000001 : x.price >= 0.000001 ? 0.00000001 : 0.0000000001;
 candleSeries=chart.addCandlestickSeries({priceFormat:{type:"price",minMove}});
-candleSeries.setData(x.candles);candleSeries.createPriceLine({price:x.price,title:"PRICE",lineWidth:2,axisLabelVisible:true});drawZones(x.candles);chart.timeScale().fitContent();render()}
+candleSeries.setData(x.candles);candleSeries.createPriceLine({price:x.price,title:"PRICE",lineWidth:2,axisLabelVisible:true});drawBreakout(x.candles);chart.timeScale().fitContent();render()}
 async function scan(){if(scanning)return;scanning=true;$("scanState").textContent="SCANNING";try{await universe();let found=[];for(let i=0;i<markets.length;i+=8){let v=await Promise.all(markets.slice(i,i+8).map(analyze));found.push(...v.filter(Boolean));await sleep(90)}signals=found.sort((a,b)=>b.count-a.count || b.rsi-a.rsi);render();if(!selected&&signals[0])openChart(signals[0].symbol);else if(selected&&signals.some(x=>x.symbol===selected))openChart(selected)}catch(e){console.warn(e)}finally{scanning=false;$("scanState").textContent="LIVE"}}
-$("rescanBtn").onclick=scan;$("search").oninput=render;$("zonesBtn").onclick=()=>{zonesOn=!zonesOn;$("zonesBtn").textContent=zonesOn?"AUTO CONFLUENCE ON":"AUTO CONFLUENCE";if(selected)openChart(selected)};
-scan();setInterval(scan,60000);
+$("rescanBtn").onclick=scan;$("search").oninput=render;scan();setInterval(scan,60000);
