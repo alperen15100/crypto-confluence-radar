@@ -22,3 +22,5 @@ main{max-width:1440px;margin:auto;padding:28px clamp(14px,3vw,40px) 60px}.hero{d
 #connection[data-state="retry"]{opacity:.9}
 #connection[data-state="degraded"]{opacity:.9}
 #connection[data-state="offline"]{opacity:.75}
+
+/* V4: scanner runs silently in the background; no transient connection banner. */

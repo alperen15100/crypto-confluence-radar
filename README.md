@@ -28,3 +28,7 @@ Built by **Ecrin Labs**.
 
 ## V3 Connection Resilience
 REST endpoint failover, WebSocket automatic reconnect with exponential backoff, cached market-list fallback, and Live/Reconnecting/Backup/Offline states. The previous successful scan stays on screen when a refresh fails.
+
+
+## V4 Futures-only
+The live radar now scans only USDⓈ-M USDT perpetual contracts. Visible pair labels use USDT.P. Background rescans run every 60 seconds, ticker prices refresh every 10 seconds, connection recovery stays silent, and nonessential market-data copy was removed from the UI.
