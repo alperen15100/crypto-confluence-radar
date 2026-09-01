@@ -1,7 +1,24 @@
-const $=id=>document.getElementById(id),API="https://fapi.binance.com",LIMIT=200,TOL=.005,RSI_LIMIT=70;
+const $=id=>document.getElementById(id),API_ENDPOINTS=["https://fapi.binance.com","https://fapi1.binance.com","https://fapi2.binance.com","https://fapi3.binance.com","https://fapi4.binance.com"],LIMIT=200,TOL=.005,RSI_LIMIT=70;
 let markets=[],signals=[],chart=null,candleSeries=null,selected=null,scanning=false;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-async function json(p){let r=await fetch(API+p,{cache:"no-store"});if(!r.ok)throw Error(r.status);return r.json()}
+async function json(p){
+  let lastErr=null;
+  for(const base of API_ENDPOINTS){
+    for(let attempt=0;attempt<2;attempt++){
+      try{
+        const ctrl=new AbortController();
+        const timer=setTimeout(()=>ctrl.abort(),9000);
+        const r=await fetch(base+p,{cache:"no-store",signal:ctrl.signal});
+        clearTimeout(timer);
+        if(!r.ok) throw Error(String(r.status));
+        const data=await r.json();
+        if(data && data.code && Number(data.code)<0) throw Error(data.msg||String(data.code));
+        return data;
+      }catch(e){lastErr=e;await sleep(250*(attempt+1))}
+    }
+  }
+  throw lastErr||Error("Binance unavailable");
+}
 function rsi(c,p=14){if(c.length<p+1)return null;let x=c.slice(-(p+1)),g=0,l=0;for(let i=1;i<=p;i++){let d=x[i]-x[i-1];d>=0?g+=d:l-=d}if(l===0)return 100;let rs=(g/p)/(l/p);return 100-100/(1+rs)}
 function overbought(c){let R=rsi(c),price=c.at(-1);if(R<70)return null;let old=c.slice(0,-1).some(p=>Math.abs(p-price)/price<TOL);return old?null:{rsi:R,price}}
 function key(s){return"overbought1d:"+s}
@@ -14,7 +31,13 @@ function count(s){
   try{localStorage.setItem(key(s),JSON.stringify(a))}catch(e){}
   return a.length
 }
-async function universe(){let[i,t]=await Promise.all([json("/fapi/v1/exchangeInfo"),json("/fapi/v1/ticker/24hr")]);let ok=new Set(i.symbols.filter(s=>s.quoteAsset==="USDT"&&s.contractType==="PERPETUAL"&&s.status==="TRADING").map(s=>s.symbol));markets=t.filter(x=>ok.has(x.symbol)).sort((a,b)=>+b.quoteVolume-+a.quoteVolume)}
+async function universe(){
+  const [i,t]=await Promise.all([json("/fapi/v1/exchangeInfo"),json("/fapi/v1/ticker/24hr")]);
+  const ok=new Set((i.symbols||[]).filter(s=>s.quoteAsset==="USDT"&&s.contractType==="PERPETUAL"&&s.status==="TRADING").map(s=>s.symbol));
+  const next=(Array.isArray(t)?t:[]).filter(x=>ok.has(x.symbol)).sort((a,b)=>+b.quoteVolume-+a.quoteVolume);
+  if(!next.length) throw Error("No futures markets returned");
+  markets=next;
+}
 async function candles(s){let d=await json(`/fapi/v1/klines?symbol=${s}&interval=1d&limit=200`);return d.map(c=>({time:Math.floor(c[0]/1000),open:+c[1],high:+c[2],low:+c[3],close:+c[4]}))}
 async function analyze(t){try{let c=await candles(t.symbol),f=overbought(c.map(x=>x.close));if(!f)return null;return{symbol:t.symbol,rsi:f.rsi,price:f.price,change:+t.priceChangePercent,count:count(t.symbol),candles:c}}catch(e){return null}}
 function fmt(v){
@@ -59,5 +82,5 @@ function openChart(s){selected=s;let x=signals.find(v=>v.symbol===s);if(!x)retur
 const minMove = x.price >= 1 ? 0.01 : x.price >= 0.01 ? 0.000001 : x.price >= 0.000001 ? 0.00000001 : 0.0000000001;
 candleSeries=chart.addCandlestickSeries({priceFormat:{type:"price",minMove}});
 candleSeries.setData(x.candles);candleSeries.createPriceLine({price:x.price,title:"PRICE",lineWidth:2,axisLabelVisible:true});drawBreakout(x.candles);chart.timeScale().fitContent();render()}
-async function scan(){if(scanning)return;scanning=true;$("scanState").textContent="SCANNING";try{await universe();let found=[];for(let i=0;i<markets.length;i+=8){let v=await Promise.all(markets.slice(i,i+8).map(analyze));found.push(...v.filter(Boolean));await sleep(90)}signals=found.sort((a,b)=>b.count-a.count || b.rsi-a.rsi);render();if(!selected&&signals[0])openChart(signals[0].symbol);else if(selected&&signals.some(x=>x.symbol===selected))openChart(selected)}catch(e){console.warn(e)}finally{scanning=false;$("scanState").textContent="LIVE"}}
+async function scan(){if(scanning)return;scanning=true;$("scanState").textContent="SCANNING";try{await universe();let found=[];for(let i=0;i<markets.length;i+=8){let v=await Promise.all(markets.slice(i,i+8).map(analyze));found.push(...v.filter(Boolean));await sleep(90)}signals=found.sort((a,b)=>b.count-a.count || b.rsi-a.rsi);render();if(!selected&&signals[0])openChart(signals[0].symbol);else if(selected&&signals.some(x=>x.symbol===selected))openChart(selected)}catch(e){console.warn("scan retry",e);$("scanState").textContent=markets.length?"LIVE":"RETRYING"}finally{scanning=false;if(markets.length)$("scanState").textContent="LIVE"}}
 $("rescanBtn").onclick=scan;$("search").oninput=render;scan();setInterval(scan,60000);
