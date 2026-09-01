@@ -9,6 +9,6 @@ Core behavior:
 - no prior close within +/-0.5%
 - every successful scan increments the 24h overbought count
 - technical flow ranks markets by highest 24h overbought count
-- no FRESH wording in the UI
+- no overbought wording in the UI
 - improved formatting for very small prices
 - optional Auto Confluence horizontal zones
