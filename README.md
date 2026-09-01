@@ -11,4 +11,4 @@ Core behavior:
 - technical flow ranks markets by highest 24h overbought count
 - no overbought wording in the UI
 - improved formatting for very small prices
-- automatic YATAY KIRILIM line: highest prior daily close across the 199 previous candles
+- automatic BREAKOUT LEVEL line: highest prior daily close across the 199 previous candles

@@ -41,7 +41,7 @@ function drawBreakout(c){
   if(!Number.isFinite(level))return;
   candleSeries.createPriceLine({
     price:level,
-    title:"YATAY KIRILIM",
+    title:"BREAKOUT LEVEL",
     lineWidth:2,
     lineStyle:2,
     axisLabelVisible:true
