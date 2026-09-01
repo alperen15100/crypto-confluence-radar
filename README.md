@@ -32,3 +32,7 @@ REST endpoint failover, WebSocket automatic reconnect with exponential backoff, 
 
 ## V4 Futures-only
 The live radar now scans only USDⓈ-M USDT perpetual contracts. Visible pair labels use USDT.P. Background rescans run every 60 seconds, ticker prices refresh every 10 seconds, connection recovery stays silent, and nonessential market-data copy was removed from the UI.
+
+
+## V6 Daily Horizontal Breakout
+Primary signal engine adapted directly from the working bot: all USDT perpetuals, 1D timeframe, 200 candles, RSI(14) >= 70, reject if any previous close is within ±0.5% of current price, rescan every 60 seconds, 24-hour occurrence count, TradingView futures link and browser alerts.

@@ -24,7 +24,7 @@
 
 <main>
 <section class="hero">
-  <div><span class="eyebrow">USDT PERPETUAL FUTURES</span><h2>Find high-confluence futures setups <em>before the move.</em></h2></div>
+  <div><span class="eyebrow">USDT PERPETUAL FUTURES</span><h2>Catch fresh daily horizontal breakouts <em>before they become crowded.</em></h2></div>
   <div class="orb"><strong id="marketCount">0</strong><span>USDT.P markets</span></div>
 </section>
 
@@ -44,6 +44,13 @@
     <button data-filter="overbought">📈 Overbought</button>
   </div>
   <div class="tools"><select id="timeframe"><option value="5m">5m</option><option value="15m" selected>15m</option><option value="1h">1h</option><option value="4h">4h</option></select><input id="search" placeholder="Search BTC, ETH…"><button id="refresh" class="ghost">Rescan</button></div>
+</section>
+
+
+<section class="panel daily-breakout-panel">
+  <div class="section-head"><div><span class="eyebrow">PRIMARY SIGNAL ENGINE · 1D</span><h3>Daily RSI 70 + Horizontal Breakout</h3><p id="dailyBreakoutUpdated">Scanning all USDT perpetual futures…</p></div><div class="daily-count"><strong id="dailyBreakoutCount">0</strong><span>active</span></div></div>
+  <div class="daily-rule">RSI ≥ 70 <b>+</b> 200 daily candles <b>+</b> no previous close within ±0.5%</div>
+  <div class="table-wrap"><table><thead><tr><th>Market</th><th>Price</th><th>24H</th><th>1D RSI</th><th>24H Count</th><th>Signal</th></tr></thead><tbody id="dailyBreakoutRows"><tr><td colspan="6" class="empty">Scanning daily horizontal breakouts…</td></tr></tbody></table></div>
 </section>
 
 <section class="panel">

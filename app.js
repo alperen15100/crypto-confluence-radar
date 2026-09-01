@@ -83,6 +83,68 @@ async function getJSON(path){return resilientJSON(path)}
 async function klines(symbol,interval='15m',limit=180){return parseKlines(await getJSON(`/fapi/v1/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`))}
 async function dailyLevels(symbol){let d=await klines(symbol,'1d',9);let prev=d.at(-2)||d.at(-1),week=d.slice(-8,-1);return{pdh:prev.high,pdl:prev.low,pwh:Math.max(...week.map(x=>x.high)),pwl:Math.min(...week.map(x=>x.low))}}
 
+
+const DAILY_BREAKOUT={interval:'1d',limit:200,rsiThreshold:70,priceTolerance:0.005,rescanMs:60000,historyWindowMs:86400000};
+let dailyBreakouts=[],dailyBreakoutRunning=false;
+
+function dailyRSI(closes,period=14){
+ if(!closes||closes.length<period+1)return null;
+ const x=closes.slice(-(period+1));let gains=0,losses=0;
+ for(let i=1;i<=period;i++){const d=x[i]-x[i-1];if(d>=0)gains+=d;else losses-=d}
+ const avgGain=gains/period,avgLoss=losses/period;
+ if(avgLoss===0)return 100;
+ const rs=avgGain/avgLoss;
+ return 100-(100/(1+rs));
+}
+function dailyHorizontalBreakout(closes){
+ if(!closes||closes.length<15)return null;
+ const lastPrice=closes.at(-1),R=dailyRSI(closes,14);
+ if(R===null||R<70)return null;
+ const previousNear=closes.slice(0,-1).some(p=>Math.abs(p-lastPrice)/lastPrice<0.005);
+ if(previousNear)return null;
+ return{rsi:R,lastPrice};
+}
+function recordDailyHit(symbol){
+ const now=Date.now(),key=`dailyHorizontal:${symbol}`;let h=[];
+ try{h=JSON.parse(localStorage.getItem(key)||'[]')}catch(e){}
+ h=h.filter(t=>now-t<86400000);h.push(now);
+ try{localStorage.setItem(key,JSON.stringify(h))}catch(e){}
+ return h.length;
+}
+async function analyzeDailyTicker(t){
+ try{
+  const c=await klines(t.symbol,'1d',200),hit=dailyHorizontalBreakout(c.map(x=>x.close));
+  if(!hit)return null;
+  return{symbol:t.symbol,price:hit.lastPrice,rsi:hit.rsi,count:recordDailyHit(t.symbol),change:+t.priceChangePercent,quoteVolume:+t.quoteVolume};
+ }catch(e){return null}
+}
+async function scanDailyHorizontalBreakouts(){
+ if(dailyBreakoutRunning)return;dailyBreakoutRunning=true;
+ try{
+  if(!universe.length)await loadUniverse();
+  const found=[];
+  for(let i=0;i<universe.length;i+=8){
+   const vals=await Promise.all(universe.slice(i,i+8).map(analyzeDailyTicker));
+   found.push(...vals.filter(Boolean));await sleep(90);
+  }
+  dailyBreakouts=found.sort((a,b)=>b.count-a.count||b.rsi-a.rsi||b.quoteVolume-a.quoteVolume);
+  try{localStorage.setItem('ccr:dailyBreakouts',JSON.stringify({t:Date.now(),v:dailyBreakouts}))}catch(e){}
+  renderDailyBreakouts();notifyDailyBreakouts();
+ }catch(e){
+  try{const c=JSON.parse(localStorage.getItem('ccr:dailyBreakouts')||'null');if(c&&Array.isArray(c.v)){dailyBreakouts=c.v;renderDailyBreakouts()}}catch(_){}
+ }finally{dailyBreakoutRunning=false}
+}
+function renderDailyBreakouts(){
+ const n=document.getElementById('dailyBreakoutCount'),rows=document.getElementById('dailyBreakoutRows'),u=document.getElementById('dailyBreakoutUpdated');
+ if(n)n.textContent=dailyBreakouts.length;if(u)u.textContent=`Updated ${new Date().toLocaleTimeString()}`;if(!rows)return;
+ if(!dailyBreakouts.length){rows.innerHTML='<tr><td colspan="6" class="empty">No fresh 1D RSI 70 horizontal breakout right now.</td></tr>';return}
+ rows.innerHTML=dailyBreakouts.slice(0,40).map(x=>`<tr onclick="window.open('https://www.tradingview.com/chart/?symbol=BINANCE:${x.symbol}.P','_blank')"><td><div class="symbol">${x.symbol.replace('USDT','')} <span class="coin">/USDT.P</span><span class="daily-breakout-badge">1D BREAK</span></div></td><td>${fmt(x.price)}</td><td class="${x.change>=0?'up':'down'}">${x.change>=0?'+':''}${x.change.toFixed(2)}%</td><td><strong>${x.rsi.toFixed(1)}</strong></td><td><strong>${x.count}</strong></td><td><span class="score hot">FRESH</span></td></tr>`).join('');
+}
+function notifyDailyBreakouts(){
+ if(!('Notification'in window)||Notification.permission!=='granted')return;
+ dailyBreakouts.slice(0,5).forEach(x=>{const key=`dailyNotify:${x.symbol}:${Math.floor(Date.now()/3600000)}`;try{if(localStorage.getItem(key))return;localStorage.setItem(key,'1')}catch(e){};new Notification(`${x.symbol.replace('USDT','')} · 1D Horizontal Breakout`,{body:`RSI ${x.rsi.toFixed(2)} · 24h count ${x.count} · fresh price zone`})});
+}
+
 function analyze(symbol,c,ticker,levels=null){
  const closes=c.map(x=>x.close),price=closes.at(-1),R=rsi(closes),e9=ema(closes,9).at(-1),e21=ema(closes,21).at(-1),M=macd(closes),V=vwap(c.slice(-80)),F=fvg(c),SR=supportResistance(c),VP=volumeProfile(c.slice(-100)),A=atr(c),ev=[]; let score=50;
  const near=(a,b,m=1.2)=>Math.abs(a-b)<=A*m;
@@ -246,6 +308,8 @@ window.openMarket=openMarket;
 
 (async()=>{
  await scan();
+ scanDailyHorizontalBreakouts();
+ setInterval(scanDailyHorizontalBreakouts,DAILY_BREAKOUT.rescanMs);
  setInterval(async()=>{
    try{
      const t=await getJSON('/fapi/v1/ticker/24hr');
