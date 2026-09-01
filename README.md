@@ -1,38 +1,14 @@
-# Crypto Confluence Radar
+# Crypto Daily Fresh Radar
 
-A zero-server, browser-based real-time crypto confluence scanner built with Binance public market data.
+Pure 1D scanner based on the working RSI + fresh horizontal breakout system.
 
-## Features
-- Live USDT market universe
-- Deep scan of liquid markets
-- Multi-indicator confluence score
-- RSI, EMA 9/21, MACD, VWAP
-- FVG detection
-- Support / resistance
-- Volume profile POC
-- Breakout detection
-- Previous day/week levels
-- Live candlestick chart
-- Order book
-- Large trade feed
-- Hot Zones / Breakouts / Oversold / Overbought radars
-- Browser alerts
-- Responsive mobile UI
-- SEO metadata, sitemap, robots.txt
-- GitHub Pages deployment
-
-Built by **Ecrin Labs**.
-
-> Educational market scanner only. Not financial advice.
-
-
-## V3 Connection Resilience
-REST endpoint failover, WebSocket automatic reconnect with exponential backoff, cached market-list fallback, and Live/Reconnecting/Backup/Offline states. The previous successful scan stays on screen when a refresh fails.
-
-
-## V4 Futures-only
-The live radar now scans only USDⓈ-M USDT perpetual contracts. Visible pair labels use USDT.P. Background rescans run every 60 seconds, ticker prices refresh every 10 seconds, connection recovery stays silent, and nonessential market-data copy was removed from the UI.
-
-
-## V6 Daily Horizontal Breakout
-Primary signal engine adapted directly from the working bot: all USDT perpetuals, 1D timeframe, 200 candles, RSI(14) >= 70, reject if any previous close is within ±0.5% of current price, rescan every 60 seconds, 24-hour occurrence count, TradingView futures link and browser alerts.
+Rules:
+- Binance USDT perpetual futures only
+- 1D candles only
+- 200 candles
+- RSI(14) >= 70
+- Current close must have no previous close within ±0.5%
+- Scan every 60 seconds
+- Only matching FRESH signals are listed
+- Clicking a signal opens its 1D chart
+- Built by Ecrin Labs

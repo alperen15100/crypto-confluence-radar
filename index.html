@@ -1,79 +1,77 @@
 <!doctype html>
-<html lang="en">
+<html lang="tr">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Crypto Confluence Radar – Live Crypto Scanner & Trading Confluence</title>
-  <meta name="description" content="Live USDT perpetual futures confluence scanner with RSI, EMA, MACD, VWAP, FVG, support and resistance, breakout detection and volume profile.">
-  <meta name="keywords" content="crypto futures scanner, USDT perpetual scanner, crypto confluence scanner, crypto breakout scanner, RSI scanner, VWAP scanner, FVG scanner">
+  <title>Crypto Daily Fresh Radar – 1D RSI 70 Horizontal Breakout Scanner</title>
+  <meta name="description" content="USDT perpetual futures için günlük RSI 70 ve fresh yatay kırılım tarayıcısı. 200 günlük kapanışta ±0.5% geçmiş fiyat yakınlığı olmayan pariteleri bulur.">
   <meta name="robots" content="index,follow">
-  <meta name="theme-color" content="#07110d">
-  <meta property="og:title" content="Crypto Confluence Radar">
-  <meta property="og:description" content="Find high-confluence crypto setups before the move.">
-  <meta property="og:type" content="website">
-  <link rel="canonical" href="https://alperen15100.github.io/crypto-confluence-radar/">
-  <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="styles.css">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Crypto Confluence Radar","applicationCategory":"FinanceApplication","operatingSystem":"Web","description":"Real-time crypto market scanner with multi-indicator confluence scoring."}</script>
 </head>
 <body>
-<header class="topbar">
-  <div class="brand"><div class="logo">CR</div><div><h1>Crypto Confluence Radar</h1><p>USDT perpetual futures radar</p></div></div>
-  <nav class="seo-nav"><a href="./">Scanner</a><a href="guides/">Guides</a><a href="coins/">Coins</a><a href="methodology.html">Methodology</a></nav><div class="head-actions"><button id="notifyBtn" class="ghost">Enable Alerts</button></div>
+<header>
+  <div>
+    <span class="brand">Crypto Daily Fresh Radar</span>
+    <small>Built by Ecrin Labs</small>
+  </div>
+  <button id="refreshBtn">Yeniden Tara</button>
 </header>
 
 <main>
-<section class="hero">
-  <div><span class="eyebrow">USDT PERPETUAL FUTURES</span><h2>Catch fresh daily horizontal breakouts <em>before they become crowded.</em></h2></div>
-  <div class="orb"><strong id="marketCount">0</strong><span>USDT.P markets</span></div>
-</section>
+  <section class="hero">
+    <span class="eyebrow">USDT PERPETUAL · 1D</span>
+    <h1>Fresh Yatay Kırılım</h1>
+    <p>RSI ≥ 70 · 200 günlük mum · mevcut fiyata geçmişte ±%0,5 yakın kapanış yok.</p>
 
-<section class="stats">
-  <article><span>High Confluence</span><strong id="highCount">0</strong><small>score ≥ 80</small></article>
-  <article><span>Breakouts</span><strong id="breakoutCount">0</strong><small>live candidates</small></article>
-  <article><span>Oversold</span><strong id="oversoldCount">0</strong><small>RSI ≤ 30</small></article>
-  <article><span>Overbought</span><strong id="overboughtCount">0</strong><small>RSI ≥ 70</small></article>
-</section>
+    <div class="stats">
+      <div><strong id="signalCount">0</strong><span>FRESH</span></div>
+      <div><strong id="marketCount">0</strong><span>PARİTE</span></div>
+      <div><strong id="scanState">Başlıyor</strong><span>DURUM</span></div>
+      <div><strong id="updated">--</strong><span>SON TARAMA</span></div>
+    </div>
+  </section>
 
-<section class="panel toolbar">
-  <div class="tabs" id="tabs">
-    <button class="active" data-filter="all">Radar</button>
-    <button data-filter="hot">🔥 Hot Zones</button>
-    <button data-filter="breakout">⚡ Breakouts</button>
-    <button data-filter="oversold">📉 Oversold</button>
-    <button data-filter="overbought">📈 Overbought</button>
-  </div>
-  <div class="tools"><select id="timeframe"><option value="5m">5m</option><option value="15m" selected>15m</option><option value="1h">1h</option><option value="4h">4h</option></select><input id="search" placeholder="Search BTC, ETH…"><button id="refresh" class="ghost">Rescan</button></div>
-</section>
+  <section class="panel">
+    <div class="head">
+      <div>
+        <h2>Fresh Sinyaller</h2>
+        <p>Sadece kriteri geçen coinler gösterilir.</p>
+      </div>
+    </div>
 
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Parite</th>
+            <th>Fiyat</th>
+            <th>24S</th>
+            <th>1D RSI</th>
+            <th>24S Sayı</th>
+          </tr>
+        </thead>
+        <tbody id="signalRows">
+          <tr><td colspan="5" class="empty">Taranıyor…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
-<section class="panel daily-breakout-panel">
-  <div class="section-head"><div><span class="eyebrow">PRIMARY SIGNAL ENGINE · 1D</span><h3>Daily RSI 70 + Horizontal Breakout</h3><p id="dailyBreakoutUpdated">Scanning all USDT perpetual futures…</p></div><div class="daily-count"><strong id="dailyBreakoutCount">0</strong><span>active</span></div></div>
-  <div class="daily-rule">RSI ≥ 70 <b>+</b> 200 daily candles <b>+</b> no previous close within ±0.5%</div>
-  <div class="table-wrap"><table><thead><tr><th>Market</th><th>Price</th><th>24H</th><th>1D RSI</th><th>24H Count</th><th>Signal</th></tr></thead><tbody id="dailyBreakoutRows"><tr><td colspan="6" class="empty">Scanning daily horizontal breakouts…</td></tr></tbody></table></div>
-</section>
+  <section id="chartPanel" class="panel hidden">
+    <div class="head">
+      <div>
+        <h2 id="chartSymbol">BTC/USDT.P</h2>
+        <p id="chartMeta">1D · 200 candles</p>
+      </div>
+      <a id="tvLink" target="_blank" rel="noopener">TradingView</a>
+    </div>
+    <div id="chart"></div>
+  </section>
+</main>
 
-<section class="panel">
-  <div class="section-head"><div><h3>Confluence Radar</h3><p id="updated">Initializing futures radar…</p></div></div>
-  <div class="table-wrap"><table><thead><tr><th>Market</th><th>Price</th><th>24h</th><th>RSI</th><th>Score</th><th>Evidence</th><th></th></tr></thead><tbody id="radarBody"><tr><td colspan="7" class="empty">Loading futures markets…</td></tr></tbody></table></div>
-</section>
+<footer>Crypto Daily Fresh Radar · Ecrin Labs</footer>
 
-<section id="detail" class="detail hidden">
-  <article class="panel chart-panel">
-    <div class="section-head"><div><h3 id="detailSymbol">BTCUSDT</h3><p id="detailMeta">Live chart</p></div><div id="detailScore" class="score">--</div></div>
-    <div id="chart"></div><div id="legend" class="legend"></div>
-  </article>
-  <aside class="stack">
-    <article class="panel"><h3>Confluence Breakdown</h3><div id="breakdown" class="signal-list"></div></article>
-    <article class="panel"><h3>Key Levels</h3><div id="levels" class="level-list"></div></article>
-    <article class="panel"><h3>Order Book</h3><div class="book"><div><b>Bids</b><div id="bids"></div></div><div><b>Asks</b><div id="asks"></div></div></div></article>
-    <article class="panel"><h3>Large Trades</h3><div id="trades" class="trades"><span class="muted">Waiting for trades…</span></div></article>
-  </aside>
-</section>
-
-<section class="panel explainer"><div class="chips"><span>RSI</span><span>EMA 9/21</span><span>MACD</span><span>VWAP</span><span>FVG</span><span>Support/Resistance</span><span>Volume Profile</span><span>Breakout</span></div></section>
-<section class="panel seo-content"><span class="eyebrow">CRYPTO MARKET SCANNER</span><h2>Free Crypto Confluence Scanner for Technical Analysis</h2><p>Crypto Confluence Radar combines trend, momentum, volume and market-structure signals in one live scanner. Scan liquid USDT perpetual futures and inspect RSI, EMA, MACD, VWAP, fair value gaps, support and resistance, volume profile levels and breakout conditions.</p><div class="seo-grid"><a href="guides/crypto-rsi-scanner.html"><strong>Crypto RSI Scanner</strong><span>Overbought and oversold market research.</span></a><a href="guides/crypto-fvg-scanner.html"><strong>Crypto FVG Scanner</strong><span>Fair value gap detection explained.</span></a><a href="guides/crypto-breakout-scanner.html"><strong>Crypto Breakout Scanner</strong><span>Track expansion around key levels.</span></a><a href="guides/crypto-vwap-scanner.html"><strong>Crypto VWAP Scanner</strong><span>Volume-weighted market context.</span></a></div><h3>How the confluence score works</h3><p>The score is not a guaranteed prediction. It summarizes independent technical observations into a 0–100 research score. Read the <a href="methodology.html">full methodology</a>.</p></section></main>
-<footer><span>Crypto Confluence Radar</span><span>USDT Perpetual Futures</span><span>Built by <strong>Ecrin Labs</strong></span></footer>
 <script src="https://unpkg.com/lightweight-charts@4.2.3/dist/lightweight-charts.standalone.production.js"></script>
 <script src="app.js"></script>
-</body></html>
+</body>
+</html>
